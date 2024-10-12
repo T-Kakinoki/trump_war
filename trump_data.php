@@ -21,6 +21,19 @@ class Card{
     public function getValue(){
         return $this->value;
     }
-
+}
+//山札の設定
+class Deck{
+    private $cards=[];
+    public function __construct(){
+        $this->createDeck();
+    }
+    public function createDeck(){
+        for( $suit =0; $suit<4; $suit++ ){
+            for($value=2;$value<=14;$value++){
+                $this->cards[]=new Card($suit,$value);
+            }
+        }
+    }
 
 }
