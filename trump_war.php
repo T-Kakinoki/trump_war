@@ -49,16 +49,31 @@ for( $i= 1;$i<=$playerNumber;$i++){
 }
 //game start
 echo "カードが配られました。.<br>.戦争！";
-//card open
-echo "プレイヤー名のカードはスートの数字です";
-
+$battleCards =[]; //場のカード
+$cardValues =[]; //カードの強さ
+$stockCards =[]; //引き分け時保管
+$winCards =[]; //勝利時保管
+//手札からランダムに一枚出す
+for($i= 1;$i<=$playerNumber;$i++){
+    $battleCardIndex = array_rand($playerCards[$i]);
+    $battleCard = $playerCards[$i][$battleCardIndex];
+//場に出たカードの一時保存
+    $battleCards[$i] = $battleCard;
+    $cardValues[$i] = $battleCard->cardInfo();
+//card open    
+    echo "{$playerNames[$i-1]}のカードは{$battleCard->cardInfo()}です";
+}
 //battle
+//カードの値を比較、最大値をピックアップ
 
-//war result
 
 //引き分けの時
 echo "引き分けです";
 //場にカードが残るため注意
+
+//war result
+
+
 
 
 //数字が異なった時
