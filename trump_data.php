@@ -38,6 +38,7 @@ class Deck{
     public function drawCard(){
         if(count($this->cards)> 0){
             $drawnCard = $this->cards[array_rand($this->cards)];
+            unset($this ->cards[array_search($drawnCard,$this->cards)]);
             return $drawnCard;
         }
 
