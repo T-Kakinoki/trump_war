@@ -1,5 +1,4 @@
 <?php
-//トランプのプロパティとかはこっちに記述
 class Card{
     private $suit;
     private $value;
@@ -35,5 +34,12 @@ class Deck{
             }
         }
     }
+//カードの配布
+    public function drawCard(){
+        if(count($this->cards)> 0){
+            $drawnCard = $this->cards[array_rand($this->cards)];
+            return $drawnCard;
+        }
 
+    }
 }
