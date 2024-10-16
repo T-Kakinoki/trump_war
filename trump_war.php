@@ -63,6 +63,11 @@ while($gameContinue){
     $cardValues =[]; //カードの強さ
 //手札からランダムに一枚出す
     for($i= 1;$i<=$playerNumber;$i++){
+        //手札なし、勝札ありの状況：勝札を手札へ
+        if(empty($playerCards[$i]) && !empty($winCards[$i])){
+            $playerCards[$i] = $winCards[$i];
+            $winCards[$i] = [];
+        }
         $battleCardIndex = array_rand($playerCards[$i]);
         $battleCard = $playerCards[$i][$battleCardIndex];
 //場に出たカードの一時保存
