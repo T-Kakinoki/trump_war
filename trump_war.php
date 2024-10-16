@@ -15,7 +15,7 @@ while($playerNumber <2 || $playerNumber > 5){
 //入力なしの時　　プレイヤー名をデフォルトで設定
 for($i=1;$i<=$playerNumber;$i++){
     echo "プレイヤー{$i}の名前を入力してください:";
-    $playerName =(fgets(STDIN));
+    $playerName =trim(fgets(STDIN));
     if($playerName === "\n"){
         $playerName = "プレイヤー{$i}";
     }
