@@ -23,14 +23,15 @@ $playerNames[] =$playerName;
 }
 //山札の生成
 $deck =new Deck();
+$cards = $deck->getCards();//山札格納
 //ランダムでのカード配布
 $playerCards =[];
 for($i= 1;$i<=$playerNumber;$i++){
     $playerCards[$i] =[];
 }
 $nowPlayer =1;
-while(count($deck->getCards()) > 0){
-    $playerCards[$nowPlayer][] = $deck->drawCard(); 
+while(count($cards) > 0){
+    $playerCards[$nowPlayer][] = array_pop($cards); 
     $nowPlayer++;
 //プレイヤー1に戻す
 if($nowPlayer > $playerNumber){
@@ -73,13 +74,11 @@ while($gameContinue){
             $playerCards[$i] = $winCards[$i];
             $winCards[$i] = [];//それまでの勝札をリセット
         }
-        $battleCardIndex = array_rand($playerCards[$i]);
-        $battleCard = $playerCards[$i][$battleCardIndex];
+        shuffle($playerCards[$i]);
+        $battleCard = array_pop($playerCards[$i]);//山札から場へ
 //場に出たカードの一時保存
         $battleCards[$i] = $battleCard;
         $cardValues[$i] = $battleCard->getValue();
-//出したカードを手札から削除
-    unset($playerCards[$i][$battleCardIndex]);
 //card open    
     echo "{$playerNames[$i-1]}のカードは{$battleCard->cardInfo()}です。\n";
     }
