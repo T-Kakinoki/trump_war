@@ -66,6 +66,7 @@ while($gameContinue){
         if(empty($playerCards[$i]) && empty($winCards[$i])){
             echo "{$playerNames[$i-1]}の手札がなくなりました。\n";
             $gameContinue = false;
+            break;
         }
         //手札なし、勝札あり：勝札を手札へ
         if(empty($playerCards[$i]) && !empty($winCards[$i])){
@@ -90,21 +91,21 @@ while($gameContinue){
 //引き分けの時(勝者が二名以上いるとき) 
     if(count($winner)>1){
         echo "引き分けです。\n";
-        foreach($winner as $stock){
-            $stockCards[] = $battleCards[$stock];//場に出ていたカードをストックへ
+        foreach($battleCards as $battleCard){
+            $stockCards[] = $battleCard;//場に出ていたカードをストックへ
         }continue;//再戦
     }else{ 
 //勝者が確定した場合
 //前回に引き分けた際キャリーオーバーする
 //勝者も$stockCardsにいったん格納後総取りする
         $winnerIndex = $winner[0];
-        foreach($winner as $stock){
-            $stockCards[] = $battleCards[$stock];//場に出ていたカードをストックへ
+        foreach($battleCards as $battleCard){
+            $stockCards[] = $battleCard;
         }
         $countCard = count($stockCards);
         echo "{$playerNames[$winnerIndex-1]}が勝ちました。{$playerNames[$winnerIndex-1]}はカードを{$countCard}枚もらいました。\n";
-        foreach($stockCards as $stock){
-            $winCards[$winnerIndex][] = $stock;
+        foreach($stockCards as $stockCard){
+            $winCards[$winnerIndex][] = $stockCard;
         }//$stockcardsの中身をすべて代入
         $stockCards = [];//ストックのリセット
         continue;//再戦        
