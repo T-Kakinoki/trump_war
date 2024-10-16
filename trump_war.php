@@ -39,6 +39,7 @@ if($nowPlayer > $playerNumber){
     $nowPlayer =1;
 }
 }
+echo "カードが配られました。";//配布完了
 
 //手札の公開(動作確認用)
 for( $i= 1;$i<=$playerNumber;$i++){
@@ -47,38 +48,53 @@ for( $i= 1;$i<=$playerNumber;$i++){
         echo $playerCard->cardInfo()."\n";
     }
 }
+
 //game start
-echo "カードが配られました。.<br>.戦争！";
-$battleCards =[]; //場のカード
-$cardValues =[]; //カードの強さ
-$stockCards =[]; //引き分け時保管
-$winCards =[]; //勝利時保管
+$gameContinue = true;
+
+while($gameContinue){
+    echo "戦争！"; //ゲームのループ開始地点はここ
+    $battleCards =[]; //場のカード
+    $cardValues =[]; //カードの強さ
+    $stockCards =[]; //引き分け時保管
+    $winCards =[]; //勝利時保管
 //手札からランダムに一枚出す
-for($i= 1;$i<=$playerNumber;$i++){
-    $battleCardIndex = array_rand($playerCards[$i]);
-    $battleCard = $playerCards[$i][$battleCardIndex];
+    for($i= 1;$i<=$playerNumber;$i++){
+        $battleCardIndex = array_rand($playerCards[$i]);
+        $battleCard = $playerCards[$i][$battleCardIndex];
 //場に出たカードの一時保存
-    $battleCards[$i] = $battleCard;
-    $cardValues[$i] = $battleCard->cardInfo();
+        $battleCards[$i] = $battleCard;
+        $cardValues[$i] = $battleCard->cardInfo();
+
+//出したカードを手札から削除
+    unset($playerCards[$i][$battleCardIndex]);
+
 //card open    
     echo "{$playerNames[$i-1]}のカードは{$battleCard->cardInfo()}です";
-}
+    }
 //battle
 //カードの値を比較、最大値をピックアップ
-
-
-//引き分けの時
-echo "引き分けです";
-//場にカードが残るため注意
-
-//war result
-
-
-
-
-//数字が異なった時
-echo "勝ちプレイヤーが勝ちました。勝ちプレイヤーはカードを○枚もらいました。";
+    $maxCardValue = max($cardValues);
+//勝利プレイヤーの特定
+    $winner = array_keys($cardValues,$maxCardValue); //勝者決定
+//引き分けの時(勝者が二名以上いるとき) 
+    if(count($winner)>1){
+        echo "引き分けです";
+        foreach($winner as $stock){
+            $stockCards[] = $battleCards[$stock];//場に出ていたカードをストックへ
+        }continue;//再戦
+    }else{ 
+//勝者が確定した場合
+    echo "勝ちプレイヤーが勝ちました。勝ちプレイヤーはカードを○枚もらいました。";
 //前回等に引き分けた際キャリーオーバーする
+//勝者も$stockCardsにいったん格納後総取りする
+
+    }
+    
+
+
+
+
 
 //next game
 //game startに戻る
@@ -86,6 +102,8 @@ echo "勝ちプレイヤーが勝ちました。勝ちプレイヤーはカー�
 
 //game set
 echo "手札0プレイヤーの手札がなくなりました。";
+}
+
 
 //final result
 echo "(プレイヤー名)の手札の枚数は○○枚です。";
