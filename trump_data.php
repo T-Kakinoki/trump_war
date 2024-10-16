@@ -26,6 +26,7 @@ class Deck{
     private $cards=[];
     public function __construct(){
         $this->createDeck();
+        $this->shuffleDeck();
     }
     public function createDeck(){
         for( $suit =0; $suit<4; $suit++ ){
@@ -34,16 +35,10 @@ class Deck{
             }
         }
     }
+    public function shuffleDeck(){
+        shuffle($this->cards);
+    }
     public function getCards(){
         return $this->cards;
-    }
-//カードの配布
-    public function drawCard(){
-        if(count($this->cards)> 0){
-            $drawnCard = $this->cards[array_rand($this->cards)];
-            unset($this ->cards[array_search($drawnCard,$this->cards)]);
-            return $drawnCard;
-        }
-
     }
 }
