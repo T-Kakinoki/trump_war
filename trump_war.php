@@ -8,7 +8,7 @@ echo "プレイヤーの人数を入力してください（2〜5）:";
 $playerNumber = (fgets(STDIN));
 //不正な値の時
 while($playerNumber <2 || $playerNumber > 5){
-    echo "エラー。人数は2～5で指定してください";
+    echo "エラー。人数は2～5で指定してください:";
     $playerNumber = (fgets(STDIN));
 }
 //add userで入力された数だけループ,プレイヤー名設定
@@ -72,9 +72,10 @@ while($gameContinue){
         //手札なし、勝札あり：勝札を手札へ
         if(empty($playerCards[$i]) && !empty($winCards[$i])){
             $playerCards[$i] = $winCards[$i];
+            shuffle($playerCards[$i]);
             $winCards[$i] = [];//それまでの勝札をリセット
         }
-        shuffle($playerCards[$i]);
+
         $battleCard = array_pop($playerCards[$i]);//山札から場へ
 //場に出たカードの一時保存
         $battleCards[$i] = $battleCard;
@@ -83,6 +84,9 @@ while($gameContinue){
     echo "{$playerNames[$i-1]}のカードは{$battleCard->cardInfo()}です。\n";
     }
 //battle
+if(!$gameContinue){
+    break;
+}
 //カードの値を比較、最大値をピックアップ
     $maxCardValue = max($cardValues);
 //勝利プレイヤーの特定
@@ -113,12 +117,31 @@ while($gameContinue){
 //final result
 for($i = 1; $i<=$playerNumber; $i++){
     $totalCards = count($playerCards[$i])+count($winCards[$i]);//手札と勝札の合算
-echo "{$playerNames[$i-1]}の手札の枚数は{$totalCards}枚です。";
+echo "{$playerNames[$i-1]}の手札の枚数は{$totalCards}枚です。\n";
 //人数分ループ
 }
-echo "プレイヤー1が1位、プレイヤー2が2位です。";
-//順位上から人数分ループ
-//これ最下位だけ文末が｢です。｣になってるから要注意
+
+$playerTotals  =[];//プレイヤーごとの合計枚数
+for($i = 1; $i<=$playerNumber; $i++){
+    $totalCards = count($playerCards[$i])+count($winCards[$i]);
+    $playerTotals[$i] = $totalCards;
+
+}
+//並び替え
+arsort($playerTotals);
+$rank =1;
+//順位上から人数分発表
+//最下位だけ文末を変更
+foreach($playerTotals as $playerIndex =>$totalCards){
+    $playerName = $playerNames[$playerIndex-1];
+    if($rank === count($playerTotals)){
+        echo "{$playerName}が{$rank}位です。\n";
+    }else{
+        echo "{$playerName}が{$rank}位、";
+    }
+    $rank++;
+}
+
 echo "戦争を終了します。";
 ?>
 
