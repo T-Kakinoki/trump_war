@@ -1,7 +1,6 @@
 <?php
 //実際のゲーム画面の挙動を記述
 require_once("trump_data.php");
-
 //game start
 echo "戦争を開始します。";
 //add user
@@ -24,7 +23,6 @@ $playerNames[] =$playerName;
 }
 //山札の生成
 $deck =new Deck();
-
 //ランダムでのカード配布
 $playerCards =[];
 for($i= 1;$i<=$playerNumber;$i++){
@@ -39,7 +37,8 @@ if($nowPlayer > $playerNumber){
     $nowPlayer =1;
 }
 }
-echo "カードが配られました。";//配布完了
+echo "カードが配られました。\n";//配布完了
+
 
 //手札の公開(動作確認用)
 for( $i= 1;$i<=$playerNumber;$i++){
@@ -49,36 +48,39 @@ for( $i= 1;$i<=$playerNumber;$i++){
     }
 }
 
+
 //game start
 $stockCards =[]; //引き分け時保管
 $winCards =[]; //勝利時保管
 for($i= 1;$i<=$playerNumber;$i++){
     $winCards[$i] = []; 
-}//各プレイヤーごとで勝利時カードの保管場所を定義
+}//各プレイヤーごとで勝利時カードの保管場所を初期化
 $gameContinue = true;
-
 while($gameContinue){
-    echo "戦争！"; //ゲームのループ開始地点はここ
+    echo "戦争！\n"; //ゲームのループ開始地点はここ
     $battleCards =[]; //場のカード
     $cardValues =[]; //カードの強さ
 //手札からランダムに一枚出す
     for($i= 1;$i<=$playerNumber;$i++){
-        //手札なし、勝札ありの状況：勝札を手札へ
+        //手札、勝札なし：ゲーム終了してリザルトへ
+        if(empty($playerCards[$i]) && empty($winCards[$i])){
+            echo "{$playerNames[$i-1]}の手札がなくなりました。\n";
+            $gameContinue = false;
+        }
+        //手札なし、勝札あり：勝札を手札へ
         if(empty($playerCards[$i]) && !empty($winCards[$i])){
             $playerCards[$i] = $winCards[$i];
-            $winCards[$i] = [];
+            $winCards[$i] = [];//それまでの勝札をリセット
         }
         $battleCardIndex = array_rand($playerCards[$i]);
         $battleCard = $playerCards[$i][$battleCardIndex];
 //場に出たカードの一時保存
         $battleCards[$i] = $battleCard;
-        $cardValues[$i] = $battleCard->cardInfo();
-
+        $cardValues[$i] = $battleCard->getValue();
 //出したカードを手札から削除
     unset($playerCards[$i][$battleCardIndex]);
-
 //card open    
-    echo "{$playerNames[$i-1]}のカードは{$battleCard->cardInfo()}です";
+    echo "{$playerNames[$i-1]}のカードは{$battleCard->cardInfo()}です。\n";
     }
 //battle
 //カードの値を比較、最大値をピックアップ
@@ -87,7 +89,7 @@ while($gameContinue){
     $winner = array_keys($cardValues,$maxCardValue); //勝者決定
 //引き分けの時(勝者が二名以上いるとき) 
     if(count($winner)>1){
-        echo "引き分けです";
+        echo "引き分けです。\n";
         foreach($winner as $stock){
             $stockCards[] = $battleCards[$stock];//場に出ていたカードをストックへ
         }continue;//再戦
@@ -99,33 +101,21 @@ while($gameContinue){
         foreach($winner as $stock){
             $stockCards[] = $battleCards[$stock];//場に出ていたカードをストックへ
         }
-        echo "{$playerNames[$winnerIndex-1]}が勝ちました。{$playerNames[$winnerIndex-1]}はカードを{count($stockCards)}枚もらいました。";
+        $countCard = count($stockCards);
+        echo "{$playerNames[$winnerIndex-1]}が勝ちました。{$playerNames[$winnerIndex-1]}はカードを{$countCard}枚もらいました。\n";
         foreach($stockCards as $stock){
             $winCards[$winnerIndex][] = $stock;
         }//$stockcardsの中身をすべて代入
         $stockCards = [];//ストックのリセット
-        continue;//再戦
-        
+        continue;//再戦        
     }
-    
-
-
-
-
-
-//next game
-//game startに戻る
-
-
-//game set
-echo "手札0プレイヤーの手札がなくなりました。";
 }
-
-
 //final result
-echo "(プレイヤー名)の手札の枚数は○○枚です。";
-//順位上から人数分ループ
-
+for($i = 1; $i<=$playerNumber; $i++){
+    $totalCards = count($playerCards[$i])+count($winCards[$i]);//手札と勝札の合算
+echo "{$playerNames[$i-1]}の手札の枚数は{$totalCards}枚です。";
+//人数分ループ
+}
 echo "プレイヤー1が1位、プレイヤー2が2位です。";
 //順位上から人数分ループ
 //これ最下位だけ文末が｢です。｣になってるから要注意
