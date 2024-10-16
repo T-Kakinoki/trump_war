@@ -50,14 +50,17 @@ for( $i= 1;$i<=$playerNumber;$i++){
 }
 
 //game start
+$stockCards =[]; //引き分け時保管
+$winCards =[]; //勝利時保管
+for($i= 1;$i<=$playerNumber;$i++){
+    $winCards[$i] = []; 
+}//各プレイヤーごとで勝利時カードの保管場所を定義
 $gameContinue = true;
 
 while($gameContinue){
     echo "戦争！"; //ゲームのループ開始地点はここ
     $battleCards =[]; //場のカード
     $cardValues =[]; //カードの強さ
-    $stockCards =[]; //引き分け時保管
-    $winCards =[]; //勝利時保管
 //手札からランダムに一枚出す
     for($i= 1;$i<=$playerNumber;$i++){
         $battleCardIndex = array_rand($playerCards[$i]);
@@ -85,10 +88,19 @@ while($gameContinue){
         }continue;//再戦
     }else{ 
 //勝者が確定した場合
-    echo "勝ちプレイヤーが勝ちました。勝ちプレイヤーはカードを○枚もらいました。";
-//前回等に引き分けた際キャリーオーバーする
+//前回に引き分けた際キャリーオーバーする
 //勝者も$stockCardsにいったん格納後総取りする
-
+        $winnerIndex = $winner[0];
+        foreach($winner as $stock){
+            $stockCards[] = $battleCards[$stock];//場に出ていたカードをストックへ
+        }
+        echo "{$playerNames[$winnerIndex-1]}が勝ちました。{$playerNames[$winnerIndex-1]}はカードを{count($stockCards)}枚もらいました。";
+        foreach($stockCards as $stock){
+            $winCards[$winnerIndex][] = $stock;
+        }//$stockcardsの中身をすべて代入
+        $stockCards = [];//ストックのリセット
+        continue;//再戦
+        
     }
     
 
