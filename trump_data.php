@@ -203,8 +203,20 @@ class GameManeger{
         $maxCardValue = max($this->cardValues);//カードの最大値ピックアップ
         $winner = array_keys($this->cardValues,$maxCardValue); //勝者決定
         $winnerIndex =$winner[0];
-        if(count($winner)>1 && $maxCardValue===14 && count($this->aces)> 1){ //引き分けかつAが二枚以上
-            $this->extrawin($winnerIndex); //特殊勝利
+        if(count($winner)>1 && $maxCardValue===14 && count($this->aces)> 1){//引き分けかつAが二枚以上
+            $spadeAce =false;
+                foreach($winner as $winnerIndex){ //対象を入れていく
+                $battleCard = $this->battleCards[$winnerIndex];
+                if($battleCard->getSuit() ==0){ //スートのインデックスが0ならtrue
+                    $spadeAce = true;
+                    $extraWinnerIndex = $winnerIndex;
+                    break;    
+                }
+            }
+            if($spadeAce){
+                $this->extrawin($extraWinnerIndex); //特殊勝利
+            }
+            
 
         }elseif(count($winner)> 1){
             $this->draw(); //通常引き分け
@@ -231,17 +243,26 @@ class GameManeger{
                 }
     }
     public function extrawin($winnerIndex){ //スペードＡ特殊勝利
+        foreach($this->battleCards as $battleCard){
+            $this->stockCards[] = $battleCard;
+        }
         $countCard = count($this->stockCards);
-        foreach($this->stockCards as $stockCard){
-            $this->winCards[$winnerIndex][] = $stockCard;
-        }//$stockcardsの中身をすべて代入
-        $this->stockCards = [];//ストックのリセット
         echo "世界一！\n";
         echo "{$this->playerNames[$winnerIndex-1]}が勝ちました。{$this->playerNames[$winnerIndex-1]}はカードを{$countCard}枚もらいました。\n";
+        foreach($this->stockCards as $stockCard){
+            $this->winCards[$winnerIndex][] = $stockCard;//$stockcardsの中身をすべて勝札へ
+        }
+        $this->stockCards = [];//ストックのリセット
     }
 
 
 
 
 }
+class Result{
+    private $player;
+    
 
+    public function __construct($playerHands, $winCards,$playerNames){
+    }
+}
