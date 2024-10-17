@@ -11,10 +11,14 @@ class Card{
 //カードの強さ設定
 //スート分け
     public function cardInfo(){
+        if($this->value == 15){
+            return "ジョーカー";
+            }
         $suits =["スペード","ダイヤ","ハート","クラブ"];
         $values =[14=>"A",13=>"K",12=>"Q",11=>"J",10=>10,9=>9,8=>8,7=>7,6=>6,5=>5,4=>4,3=>3,2=>2];
         return "{$suits[$this->suit]}の{$values[$this->value]}";
     }
+    
     public function getSuit(){
         return $this->suit;
     }
@@ -35,6 +39,7 @@ class Deck{
                 $this->cards[]=new Card($suit,$value);
             }
         }
+        $this->cards[]= new Card(4,15);//ジョーカー追加
     }
     public function shuffleDeck(){
         shuffle($this->cards);
