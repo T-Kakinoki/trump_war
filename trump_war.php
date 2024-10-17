@@ -1,53 +1,18 @@
 <?php
-//実際のゲーム画面の挙動を記述
 require_once("trump_data.php");
-//game start
+//ゲーム開始
 echo "戦争を開始します。";
-//add user
-echo "プレイヤーの人数を入力してください（2〜5）:";
-$playerNumber = (fgets(STDIN));
-//不正な値の時
-while($playerNumber <2 || $playerNumber > 5){
-    echo "エラー。人数は2～5で指定してください:";
-    $playerNumber = (fgets(STDIN));
-}
-//add userで入力された数だけループ,プレイヤー名設定
-//入力なしの時　　プレイヤー名をデフォルトで設定
-for($i=1;$i<=$playerNumber;$i++){
-    echo "プレイヤー{$i}の名前を入力してください:";
-    $playerName =trim(fgets(STDIN));
-    if($playerName === ""){
-        $playerName = "プレイヤー{$i}";
-    }
-$playerNames[] =$playerName;
-}
+//プレイヤーの人数、プレイヤー名設定
+$player = new Player();
+$playerNumber = $player->getPlayerNumber(); //プレイヤー人数
+$playerNames = $player->getPlayerNames(); //プレイヤー名
 //山札の生成
 $deck =new Deck();
 $cards = $deck->getCards();//山札格納
-//ランダムでのカード配布
-$playerCards =[];
-for($i= 1;$i<=$playerNumber;$i++){
-    $playerCards[$i] =[];
-}
-$nowPlayer =1;
-while(count($cards) > 0){
-    $playerCards[$nowPlayer][] = array_pop($cards); 
-    $nowPlayer++;
-//プレイヤー1に戻す
-if($nowPlayer > $playerNumber){
-    $nowPlayer =1;
-}
-}
+//手札配布
+$hand = new Hand($cards,$player);
 echo "カードが配られました。\n";//配布完了
 
-
-//手札の公開(動作確認用)
-for( $i= 1;$i<=$playerNumber;$i++){
-    echo "{$playerNames[$i-1]}.\n";
-    foreach($playerCards[$i] as $playerCard){
-        echo $playerCard->cardInfo()."\n";
-    }
-}
 
 
 //game start
