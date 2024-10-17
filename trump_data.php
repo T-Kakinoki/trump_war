@@ -99,7 +99,6 @@ class Hand{
         $this->player = $player;
         $this->playerHands = [];
         $this->setHands();
-        $this->openHands();
     }
     public function setHands(){
         $playerNumber = $this->player->getPlayerNumber();
@@ -116,19 +115,10 @@ class Hand{
             }
         }
     }
-    public function openHands(){ //手札公開(動作確認用)
-        $playerNumber = $this->player->getPlayerNumber();
-        $playerNames = $this->player->getPlayerNames();
-        for( $i= 1;$i<=$playerNumber;$i++){
-            echo "{$playerNames[$i-1]}.\n";
-            foreach($this->playerHands[$i] as $playerCard){
-                echo $playerCard->cardInfo()."\n";
-            }
-        }
-    }
     public function getPlayerHands(){
         return $this->playerHands;
     }
+
 
 }
 //ゲーム基礎部分
@@ -153,6 +143,10 @@ class GameManeger{
         $this ->playerNumber = $this -> players->getPlayerNumber();
         $this->playerNames = $this -> players->getPlayerNames();
         $this->playerHands = $this ->hand-> getPlayerHands();
+        for($i=1;$i<=$this->playerNumber;$i++){
+            $this->winCards[$i] =[];//勝札初期化
+        }
+
     }
     //ゲーム継続条件
     public function gameContinue(){
@@ -220,6 +214,8 @@ class GameManeger{
             }
             if($spadeAce){
                 $this->extrawin($extraWinnerIndex); //特殊勝利
+            }else{
+                $this->draw();
             }
             
 
@@ -259,15 +255,56 @@ class GameManeger{
         }
         $this->stockCards = [];//ストックのリセット
     }
+    public function getWinCards(){
+        return $this->winCards;
+    }
+    public function getPlayerHands(){
+        return $this->playerHands;
+    }
 
 
 
 
 }
 class Result{
-    private $player;
+    private $playerHands;
+    private $winCards;
+    private $playerNames;
+    private $playerNumber;
+    private $playerTotals =[];
     
 
     public function __construct($playerHands, $winCards,$playerNames){
+        $this->playerHands = $playerHands;
+        $this->winCards = $winCards;
+        $this->playerNames = $playerNames;
+        $this->playerNumber = count($this->playerNames);
+        $this->announcePlayerTotals();
+        $this->announceRank();
+    }
+
+    public function announcePlayerTotals(){//枚数発表
+        for($i = 1; $i<=$this->playerNumber; $i++){
+            $totalCards =0;//初期化
+            $totalCards = count($this->playerHands[$i])+count($this->winCards[$i]);//手札と勝札の合算
+            echo "{$this->playerNames[$i-1]}の手札の枚数は{$totalCards}枚です。\n";
+            $this->playerTotals[$i] = $totalCards;
+        }
+    }
+    public function announceRank(){//順位発表
+        //並び替え
+        arsort($this->playerTotals);
+        $rank =1;
+        //順位上から人数分発表
+        //最下位だけ文末を変更
+        foreach($this->playerTotals as $playerIndex =>$totalCards){
+            $playerName = $this->playerNames[$playerIndex-1];
+            if($rank === count($this->playerTotals)){
+                echo "{$playerName}が{$rank}位です。\n";
+            }else{
+                echo "{$playerName}が{$rank}位、";
+            }
+        $rank++;
+        }
     }
 }
