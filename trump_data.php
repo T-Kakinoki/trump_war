@@ -128,11 +128,11 @@ class Hand{
 }
 //ゲーム基礎部分
 class GameManeger{
-    protected $battleCards = [];//場に出すカード
-    protected $stockCards = [];//一時保存場所
-    protected $winCards =[];//勝札
-    protected $cardValues = [];
-    protected $aces =[];
+    private $battleCards = [];//場に出すカード
+    private $stockCards = [];//一時保存場所
+    private $winCards =[];//勝札
+    private $cardValues = [];
+    private $aces =[];
     private $players;
     private $deck;
     private $hand;
