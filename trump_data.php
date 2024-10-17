@@ -1,4 +1,5 @@
 <?php
+//カードの設定
 class Card{
     private $suit;
     private $value;
@@ -41,4 +42,90 @@ class Deck{
     public function getCards(){
         return $this->cards;
     }
+}
+//プレイヤー設定
+class Player{
+    private $playerNumber;
+    private $playerNames = [];
+
+    public function __construct(){
+        $this->playerNumber = $this->setPlayerNumber();
+        $this->setPlayerName();
+    }
+    //人数設定
+    public function setPlayerNumber(){
+        echo "プレイヤーの人数を入力してください（2〜5）:";
+        $playerNumber = (fgets(STDIN));
+        //不正な値の時
+        while($playerNumber <2 || $playerNumber > 5){
+        echo "エラー。人数は2～5で指定してください:";
+        $playerNumber = (fgets(STDIN));
+        }
+        return (int)$playerNumber;
+    }
+    
+    //プレイヤーネーム設定
+    
+    public function setPlayerName(){
+        for($i=1;$i<=$this->playerNumber;$i++){
+            echo "プレイヤー{$i}の名前を入力してください:";
+            $playerName =trim(fgets(STDIN));
+            if($playerName === ""){ 
+                $playerName = "プレイヤー{$i}"; //入力なし:デフォルトのプレイヤーネームを設定
+            }
+        $this->playerNames[] =$playerName;
+        }
+    }
+
+    public function getPlayerNumber(){
+        return $this->playerNumber;
+    }
+    public function getPlayerNames(){
+        return $this->playerNames;
+    }
+}
+//手札の設定
+class Hand{
+    private $cards;//山札
+    private $player;
+    private $playerCards;//プレイヤーごとの手札
+    public function __construct($cards,$player){
+        $this->cards = $cards;
+        $this->player = $player;
+        $this->playerCards = [];
+        $this->setHands();
+        $this->openHands();
+    }
+    public function setHands(){
+        $playerNumber = $this->player->getPlayerNumber();
+        for($i= 1;$i<=$playerNumber;$i++){
+            $this->playerCards[$i] =[]; //人数分手札初期化
+        }
+        $nowPlayer =1;
+        while(count($this->cards) > 0){
+            $this->playerCards[$nowPlayer][] = array_pop($this->cards); 
+            $nowPlayer++;
+            //プレイヤー1に戻す
+            if($nowPlayer > $playerNumber){
+                $nowPlayer =1;
+            }
+        }
+    }
+    public function openHands(){ //手札公開(動作確認用)
+        $playerNumber = $this->player->getPlayerNumber();
+        $playerNames = $this->player->getPlayerNames();
+        for( $i= 1;$i<=$playerNumber;$i++){
+            echo "{$playerNames[$i-1]}.\n";
+            foreach($this->playerCards[$i] as $playerCard){
+                echo $playerCard->cardInfo()."\n";
+            }
+        }
+    }
+    public function getPlayerCards(){
+        return $this->playerCards;
+    }
+
+}
+class GameManeger{
+    private 
 }

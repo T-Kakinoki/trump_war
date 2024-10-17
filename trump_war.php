@@ -16,7 +16,7 @@ while($playerNumber <2 || $playerNumber > 5){
 for($i=1;$i<=$playerNumber;$i++){
     echo "プレイヤー{$i}の名前を入力してください:";
     $playerName =trim(fgets(STDIN));
-    if($playerName === "\n"){
+    if($playerName === ""){
         $playerName = "プレイヤー{$i}";
     }
 $playerNames[] =$playerName;
@@ -89,15 +89,49 @@ if(!$gameContinue){
 }
 //カードの値を比較、最大値をピックアップ
     $maxCardValue = max($cardValues);
+    $aces = array_keys($cardValues,14);
 //勝利プレイヤーの特定
     $winner = array_keys($cardValues,$maxCardValue); //勝者決定
 //引き分けの時(勝者が二名以上いるとき) 
-    if(count($winner)>1){
-        echo "引き分けです。\n";
-        foreach($battleCards as $battleCard){
-            $stockCards[] = $battleCard;//場に出ていたカードをストックへ
-        }continue;//再戦
-    }else{ 
+if(count($winner)>1){
+    //最大値がAかつAが複数枚
+    $spadeAce =null;
+    if($maxCardValue===14 && count($aces)> 1){
+        echo "Aが複数枚確認\n"; //デバッグ用
+        foreach($aces as $ace){
+            if($battleCards[$ace]->getSuit()==="スペード"){ 
+                $spadeAce = $ace;
+                echo "スペードのAが見つかりました。{$playerNames[$spadeAce]}が勝者です。\n";  // デバッグ用
+                break;
+            }
+        }
+    }
+        //スペードのAがあるとき
+        if($spadeAce !== null){
+            $winnerIndex = $spadeAce;
+            
+            foreach($battleCards as $battleCard){
+                $stockCards[] = $battleCard; 
+            }
+            $countCard = count($stockCards);
+            echo "世界一！\n";
+            echo "{$playerNames[$winnerIndex-1]}が勝ちました。{$playerNames[$winnerIndex-1]}はカードを{$countCard}枚もらいました。\n";
+            foreach($stockCards as $stockCard){
+                $winCards[$winnerIndex][] = $stockCard;
+            }//$stockcardsの中身をすべて代入
+            $stockCards = [];//ストックのリセット
+            continue;               
+        }else{
+            //通常の引き分け
+            echo "引き分けです。\n";
+            foreach($battleCards as $battleCard){
+                $stockCards[] = $battleCard;//場に出ていたカードをストックへ
+            }
+            continue;
+
+        }
+        
+    }else{
 //勝者が確定した場合
 //前回に引き分けた際キャリーオーバーする
 //勝者も$stockCardsにいったん格納後総取りする
@@ -143,10 +177,3 @@ foreach($playerTotals as $playerIndex =>$totalCards){
 }
 
 echo "戦争を終了します。";
-?>
-
-
-
-//#ジョーカー
-//#スペードA
-//いったん後回し
